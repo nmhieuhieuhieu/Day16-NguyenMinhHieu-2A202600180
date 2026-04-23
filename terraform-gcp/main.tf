@@ -92,8 +92,8 @@ resource "google_compute_instance" "gpu_node" {
 
   boot_disk {
     initialize_params {
-      # Deep Learning VM image with CUDA pre-installed
-      image = "projects/deeplearning-platform-release/global/images/family/common-cu121-debian-11"
+      # Sử dụng image Debian 11 tiêu chuẩn cho CPU
+      image = "projects/debian-cloud/global/images/family/debian-11"
       size  = 100
       type  = "pd-ssd"
     }
@@ -105,15 +105,16 @@ resource "google_compute_instance" "gpu_node" {
     # No access_config block = no public IP (private only)
   }
 
-  guest_accelerator {
-    type  = var.gpu_type
-    count = var.gpu_count
-  }
+  # guest_accelerator {
+  #   type  = var.gpu_type
+  #   count = var.gpu_count
+  # }
 
   scheduling {
-    on_host_maintenance = "TERMINATE"
+    on_host_maintenance = "MIGRATE" # Thay chữ TERMINATE bằng MIGRATE
     automatic_restart   = true
   }
+
 
   service_account {
     email  = google_service_account.gpu_node_sa.email
